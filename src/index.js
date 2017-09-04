@@ -44,7 +44,7 @@ function isSomeTrue(arr, fn) {
     for ( var i = 0; i < arr.length; i++) {
         if (fn(arr[i])) {
             return true;
-            break;
+        }
     }
 
     return false;
@@ -138,7 +138,7 @@ function calculator(number = 0) {
     }
 
     return obj;
-};
+}
 
 export {
     isAllTrue,
