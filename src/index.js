@@ -61,11 +61,12 @@ function deleteProperty(obj, prop) {
  Функция должна проверить существует ли укзаанное свойство в указанном объекте
  */
 function hasProperty(obj, prop) {
-		if (prop in obj) {
-				return true;
-		}
+		// if (prop in obj) {
+		// 		return true;
+		// }
 
-		return	false;
+		// return	false;
+		return prop in obj;
 }
 
 /*
@@ -73,13 +74,14 @@ function hasProperty(obj, prop) {
  Функция должна получить все перечисляемые свойства объекта и вернуть их в виде массива
  */
 function getEnumProps(obj) {
-		var arrayOfProps = [];
+		// var arrayOfProps = [];
 
-		for (var prop in obj) {
-				arrayOfProps.push(prop);
-		}
+		// for (var prop in obj) {
+		// 		arrayOfProps.push(prop);
+		// }
 
-		return arrayOfProps;
+		// return arrayOfProps;
+		return Object.keys(obj);
 }
 
 /*
@@ -87,51 +89,95 @@ function getEnumProps(obj) {
  Функция должна перебрать все свойства объекта, преобразовать их имена в верхний регистра и вернуть в виде массива
  */
 function upperProps(obj) {
-		var arrayOfUpperProps = [];
+		// var arrayOfUpperProps = [];
 
-		for (var prop in obj) {
-				arrayOfUpperProps.push(prop.toUpperCase());
-		}
+		// for (var prop in obj) {
+		// 		arrayOfUpperProps.push(prop.toUpperCase());
+		// }
 
-		return arrayOfUpperProps;
+		// return arrayOfUpperProps;
+		return Object.keys(obj).map(function(item) {
+
+			return item.toUpperCase();
+		})
 }
 
 /*
  Задача 8 *:
  Напишите аналог встроенного метода slice для работы с массивами
  */
-function slice(array, from, to) {
-		var slicedArray = [];
+function slice(array, from = 0, to = array.length) {
+	var slicedArray = [];
 
-		if (from && to) {
-				if (from >= 0 && to >= 0) {
-						for (var i = from; i < array.length; i++) {
-								if (i === to) {
-										return array;
-								}
-								if (i < to) {
-										slicedArray.push(array(i));
-								}
-						}
+	if (to > array.length) {
+		to = array.length;
+	}
 
-						return array = slicedArray;
-				}
+	if (to < 0) {
+		to = array.length - to;
+	}
 
-				if (from <= 0 && to < 0) {
-						for (var i = from; i < array.length; i--) {
-								if (i === to) {
-										return array;
-								}
-								if (i > to) {
-										slicedArray.push(array(i));
-								}
-						}
+	if (from < 0 && from >= -array.length) {
+		from = array.length - from;
+	}
+	if (from < -array.length) {
+		from = 0;
+	}
 
-						return array = slicedArray;
-				}
+	for (var i = from; i < to; i++) {
+		slicedArray.push(array(i));
+	}
 
-		
-		}
+	return slicedArray;
+
+	// if (from && to) {
+	// 	if (from >= 0 && to >= 0) {
+	// 		for (var i = from; i < array.length; i++) {
+	// 			if (i === to) {
+	// 				return slicedArray;
+	// 			}
+	// 			if (i < to) {
+	// 				slicedArray.push(array(i));
+	// 			}
+	// 		}
+
+	// 		return slicedArray;
+	// 	}
+
+	// 	if (from <= 0 && to < 0) {
+	// 		for (var i = from; i < (array.length - to); i++) {
+	// 			if (i === to) {
+	// 				return slicedArray;
+	// 			}
+	// 			if (i > to) {
+	// 				slicedArray.push(array(i));
+	// 			}
+	// 		}
+
+	// 		return slicedArray;
+	// 	}
+	// }
+
+	// if (!to) {
+	// 	if (!from) {
+	// 		return slicedArray = array;
+	// 	}
+	// 	if (from >= 0) {
+	// 		for (var i = from; i < array.length; i++) {
+	// 			slicedArray.push(array(i));
+	// 		}
+
+	// 		return slicedArray;
+	// 	}
+	// 	if (from < 0) {
+	// 		for (var i = from; i > -(array.length); i--) {
+	// 			slicedArray.push(array(i));
+	// 		}
+
+	// 		return slicedArray;
+	// 	}
+	// }
+
 		
 }
 
