@@ -1,74 +1,90 @@
-/* ДЗ 1 - Функции */
+/* ДЗ 5 - DOM Events */
 
-/*
- Задание 1:
-
- Функция должна принимать один аргумент и возвращать его
+/**
+ * Функция должна добавлять обработчик fn события eventName к элементу target
+ *
+ * @param {string} eventName - имя события, на которое нужно добавить обработчик
+ * @param {Element} target - элемент, на который нужно добавить обработчик
+ * @param {function} fn - обработчик
  */
-function returnFirstArgument(arg) {
-	return arg;
+function addListener(eventName, target, fn) {
+	target.addEventListener(eventName, fn);
 }
 
-/*
- Задание 2:
-
- Функция должна принимать два аргумента и возвращать сумму переданных значений
- Значение по умолчанию второго аргумента должно быть 100
+/**
+ * Функция должна удалять обработчик fn события eventName у элемента target
+ *
+ * @param {string} eventName - имя события, для которого нужно удалить обработчик
+ * @param {Element} target - элемент, у которого нужно удалить обработчик
+ * @param {function} fn - обработчик
  */
-function defaultParameterValue(a, b = 100) {
-	return a + b;
+function removeListener(eventName, target, fn) {
+	target.removeEventListener(eventName, fn);
 }
 
-/*
- Задание 3:
-
- Функция должна возвращать все переданные в нее аргументы в виде массива
- Количество переданных аргументов заранее неизвестно
+/**
+ * Функция должна добавлять к target обработчик события eventName, который должен отменять действие по умолчанию
+ *
+ * @param {string} eventName - имя события, для которого нужно удалить обработчик
+ * @param {Element} target - элемент, на который нужно добавить обработчик
  */
-function returnArgumentsArray() {
-	var arr = [];
-	for (var i = 0; i < arguments.length; i++) {
-		arr.push(arguments[i]);
+function skipDefault(eventName, target) {
+	target.addEventListener(eventName, function(e) {
+		e.preventDefault();
+	});
+}
+
+/**
+ * Функция должна эмулировать событие click для элемента target
+ *
+ * @param {Element} target - элемент, на который нужно добавить обработчик
+ */
+function emulateClick(target) {
+	var event = new CustomEvent('click');
+
+	target.dispatchEvent(event);
+}
+
+/**
+ * Функция должна добавить такой обработчик кликов к элементу target
+ * который реагирует (вызывает fn) только на клики по элементам BUTTON внутри target
+ *
+ * @param {Element} target - элемент, на который нужно добавить обработчик
+ * @param {function} fn - функция, которую нужно вызвать при клике на элемент BUTTON внутри target
+ */
+function delegate(target, fn) {
+	target.addEventListener('click', function(e) {
+		if (e.target.tagName === "BUTTON") {
+			fn();
+		}
+	});
+}
+
+/**
+ * *** Со звездочкой ***
+ * Функция должна добавить такой обработчик кликов к элементу target
+ * который сработает только один раз и удалится
+ * Постарайтесь не создавать глобальных переменных
+ *
+ * @param {Element} target - элемент, на который нужно добавить обработчик
+ * @param {function} fn - обработчик
+ */
+
+function once(target, fn) {
+
+	let event = function() {
+		fn();
+		target.removeEventListener('click', event);
 	}
-	return arr;
-}
 
-/*
- Задание 4:
-
- Функция должна принимать другую функцию и возвращать результат вызова переданной функции
- */
-function returnFnResult(fn) {
-	return fn();
-}
-
-/*
- Задание 5:
-
- Функция должна принимать число (значение по умолчанию - 0) и возвращать функцию (F)
- При вызове F, переданное число должно быть увеличено на единицу и возвращено из F
- */
-function returnCounter(number = 0) {
-	return function F() {
-		return ++number;
-	}
-}
-
-/*
- Задание 6 *:
-
- Функция должна принимать другую функцию (F) и некоторое количество дополнительных аргументов
- Функция должна привязать переданные аргументы к функции F и вернуть получившуюся функцию
- */
-function bindFunction(fn, ...args) {
-	return fn.bind(null, ...args);
+	target.addEventListener('click', event);
 }
 
 export {
-    returnFirstArgument,
-    defaultParameterValue,
-    returnArgumentsArray,
-    returnFnResult,
-    returnCounter,
-    bindFunction
-}
+    addListener,
+    removeListener,
+    skipDefault,
+    emulateClick,
+    delegate,
+    once
+};
