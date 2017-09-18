@@ -1,114 +1,55 @@
 import { assert } from 'chai';
-import { randomValue as random, randomStringArray } from '../helper';
-import {
-    bindFunction,
-    defaultParameterValue,
-    returnArgumentsArray,
-    returnCounter,
-    returnFirstArgument,
-    returnFnResult
-} from '../src/index';
+import { delayPromise, loadAndSortTowns } from '../src/index';
 
-describe('ДЗ 1 - функции', () => {
-    describe('returnFirstArgument', () => {
-        it('должна возвращать переданный аргумент', () => {
-            let value = random();
-            let result = returnFirstArgument(value);
+describe('ДЗ 6.1 - Асинхронность и работа с сетью', () => {
+    describe('delayPromise', () => {
+        it('должна возвращать Promise', () => {
+            let result = delayPromise(1);
 
-            assert.strictEqual(result, value);
+            // в FF + babel есть проблема при проверке instanceof Promise
+            // поэтому приходится проверять так
+            assert.equal(result.constructor.name, 'Promise');
+        });
+
+        it('Promise должен быть resolved через указанное количество секунд', done => {
+            let result = delayPromise(1);
+            let startTime = new Date();
+
+            result.then(() => {
+                assert.isAtLeast(new Date() - startTime, 1000);
+                done();
+            }).catch(done);
         });
     });
 
-    describe('defaultParameterValue', () => {
-        it('должна возвращать сумму переданных аргументов', () => {
-            let valueA = random('number');
-            let valueB = random('number');
-            let result = defaultParameterValue(valueA, valueB);
+    describe('loadAndSortTowns', () => {
+        it('должна возвращать Promise', () => {
+            let result = loadAndSortTowns();
 
-            assert.strictEqual(result, valueA + valueB);
+            // в FF + babel есть проблема при проверке instanceof Promise
+            // поэтому приходится проверять так
+            assert.equal(result.constructor.name, 'Promise');
+            assert.typeOf(result.then, 'function');
+            assert.typeOf(result.catch, 'function');
         });
 
-        it('значение по умолчанию второго аргумента должно быть 100', () => {
-            let value = random('number');
-            let result = defaultParameterValue(value);
+        it('Promise должен разрешаться массивом из городов', done => {
+            /* eslint-disable max-nested-callbacks */
+            let result = loadAndSortTowns();
 
-            assert.strictEqual(result, value + 100);
-        });
-    });
+            result.then(towns => {
+                assert.isArray(towns, 'должен быть массивом');
+                assert.equal(towns.length, 50, 'неверный размер массива');
+                towns.forEach((town, i, towns) => {
+                    assert.isTrue(town.hasOwnProperty('name'), 'город должен иметь свойтво name');
 
-    describe('returnArgumentsArray', () => {
-        it('должна возвращать переданные аргументы в виде массива', () => {
-            let result;
-            let value;
-
-            value = random('array', 1);
-            result = returnArgumentsArray(...value);
-            assert.deepEqual(result, value);
-        });
-
-        it('должна возвращать пустой массив если нет аргументов', () => {
-            let result = returnArgumentsArray();
-
-            assert.deepEqual(result, []);
-        });
-    });
-
-    describe('returnFnResult', () => {
-        it('должна возвращать результат вызова переданной функции', () => {
-            function fn() {
-                return value;
-            }
-
-            let value = random();
-            let result = returnFnResult(fn);
-
-            assert.strictEqual(result, value);
-        });
-    });
-
-    describe('returnCounter', () => {
-        it('должна возвращать функцию', () => {
-            let result = returnCounter();
-
-            assert.typeOf(result, 'function');
-        });
-
-        it('возвращаемая функция должна увеличивать переданное число на единицу при каждом вызове', () => {
-            let value = random('number');
-            let result = returnCounter(value);
-
-            assert.equal(result(), value + 1);
-            assert.equal(result(), value + 2);
-            assert.equal(result(), value + 3);
-        });
-
-        it('значение аргумента должно быть 0 по умолчанию', () => {
-            let result = returnCounter();
-
-            assert.equal(result(), 1);
-            assert.equal(result(), 2);
-            assert.equal(result(), 3);
-        });
-    });
-
-    describe('bindFunction', () => {
-        let valuesArr = randomStringArray();
-
-        function fn(...valuesArr) {
-            return [...arguments].join('');
-        }
-
-        it('должна возвращать функцию', () => {
-            let result = bindFunction(fn);
-
-            assert.typeOf(result, 'function');
-        });
-
-        it('должна привязывать любое кол-во аргументов возвращаемой функции', () => {
-
-            let result = bindFunction(fn, ...valuesArr);
-
-            assert.equal(result(), valuesArr.join(''));
+                    if (i) {
+                        assert.isBelow(towns[i - 1].name, town.name, 'города должны быть отсортированы');
+                    }
+                });
+                done();
+            }).catch(done);
+            /* eslint-enable */
         });
     });
 });
